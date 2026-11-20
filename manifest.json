@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "插件目录定位器",
+  "version": "1.0.0",
+  "description": "可视化选择 Chrome 已安装扩展，并一键在资源管理器中打开其安装目录。",
+  "permissions": [
+    "management",
+    "nativeMessaging"
+  ],
+  "action": {
+    "default_title": "插件目录定位器",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

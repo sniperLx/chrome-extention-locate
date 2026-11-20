@@ -1,0 +1,8 @@
+.chrome-preview/
+.chrome-preview-2/
+.chrome-dom-preview/
+.chrome-e2e/
+.edge-preview/
+dist/
+native-host/bin/
+popup-preview.png

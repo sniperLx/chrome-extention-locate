@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件目录定位器</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M4.5 9.5h7l2.3 2.7h13.7v12.3a2 2 0 0 1-2 2h-21a2 2 0 0 1-2-2V11.5a2 2 0 0 1 2-2Z" fill="currentColor"/>
+              <path d="M4.5 9.5V7.4a2 2 0 0 1 2-2h5.2l2.2 2.6h6.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="23" cy="20" r="4.25" stroke="white" stroke-width="2"/>
+              <path d="m26.2 23.2 2.1 2.1" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1>插件目录定位器</h1>
+            <p>Local extension finder</p>
+          </div>
+        </div>
+        <button class="icon-button" id="refreshButton" type="button" title="刷新插件列表" aria-label="刷新插件列表">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </header>
+
+      <section class="toolbar" aria-label="插件筛选与助手状态">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <input id="searchInput" type="search" placeholder="搜索插件名称或 ID" autocomplete="off" spellcheck="false">
+          <kbd>Ctrl K</kbd>
+        </label>
+        <button class="host-status checking" id="hostStatus" type="button" title="重新检测本机助手">
+          <span class="status-dot"></span>
+          <span id="hostStatusText">检测中</span>
+        </button>
+      </section>
+
+      <section class="setup-banner" id="setupBanner" hidden>
+        <div class="banner-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 8v5m0 3.5v.01M10.3 3.8 2.7 17a2 2 0 0 0 1.74 3h15.12a2 2 0 0 0 1.74-3L13.7 3.8a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="banner-copy">
+          <strong>还需安装本机助手</strong>
+          <p>Chrome 不允许扩展直接打开文件夹，安装一次助手后即可一键定位。</p>
+          <button id="copyInstallButton" type="button">复制安装命令</button>
+        </div>
+        <button class="banner-close" id="dismissSetupButton" type="button" aria-label="稍后安装">×</button>
+      </section>
+
+      <div class="list-heading">
+        <div>
+          <span id="summaryText">正在读取插件...</span>
+          <span class="count-badge" id="countBadge">0</span>
+        </div>
+        <button class="text-button" id="toggleFilterButton" type="button">仅看已启用</button>
+      </div>
+
+      <main class="extension-viewport" id="extensionViewport">
+        <div class="loading-state" id="loadingState">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>正在扫描已安装插件</p>
+        </div>
+        <div class="extension-grid" id="extensionGrid" role="listbox" aria-label="已安装插件"></div>
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-art" aria-hidden="true">⌕</div>
+          <strong id="emptyTitle">没有找到插件</strong>
+          <p id="emptyDescription">试试更换搜索关键词或筛选条件。</p>
+        </div>
+      </main>
+
+      <footer class="action-panel" id="actionPanel">
+        <div class="selection-copy">
+          <div class="selection-title-row">
+            <strong id="selectedName">选择一个插件</strong>
+            <span class="version-chip" id="selectedVersion" hidden></span>
+          </div>
+          <code id="selectedId">选择后可查看安装位置</code>
+        </div>
+        <button class="open-button" id="openButton" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3.5 7.5h6l2 2H20a1.5 1.5 0 0 1 1.5 1.5v7.5a1.5 1.5 0 0 1-1.5 1.5H4a1.5 1.5 0 0 1-1.5-1.5V9A1.5 1.5 0 0 1 4 7.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M13.5 14h4m-2-2v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>打开文件夹</span>
+        </button>
+        <div class="located-path" id="locatedPath" hidden>
+          <span class="path-icon" aria-hidden="true">↗</span>
+          <span id="locatedPathText"></span>
+          <button id="copyPathButton" type="button" aria-label="复制安装路径">复制</button>
+        </div>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>
